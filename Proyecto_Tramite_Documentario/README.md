@@ -4,9 +4,24 @@
 **Curso:** Sistemas de Gestión de Base de Datos I (Ciclo V — Semestre 2026-I)  
 **Docentes:** MSc. Ivan Soto Rodriguez / MSc. Beatriz Montaño  
 
+
 ---
 
-## 👥 1. Portafolio Académico del Grupo de Investigación (Grupo 04)
+<div align="center">
+
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repositorio%20del%20Proyecto-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Bryared/Muyu360_BD)
+[![Live Demo](https://img.shields.io/badge/Vercel-App%20en%20Vivo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://muyu360-bd.vercel.app/)
+[![PostgreSQL](https://img.shields.io/badge/Supabase-PostgreSQL%203FN-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x%20REST%20API-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
+[![React](https://img.shields.io/badge/React%2019-SPA%20Frontend-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+
+</div>
+
+> **🔗 Recursos del Proyecto:**
+> - 📦 **Repositorio GitHub:** https://github.com/Bryared/Muyu360_BD
+> - 🌐 **Aplicación Web en Vivo (Vercel):** https://muyu360-bd.vercel.app/
+
+
 
 El proyecto ha sido desarrollado bajo una **metodología de participación cooperativa del 100%**, donde cada integrante lideró un componente crítico del sistema de acuerdo a las competencias del sílabo:
 

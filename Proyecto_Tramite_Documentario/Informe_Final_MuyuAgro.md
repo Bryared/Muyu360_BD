@@ -32,9 +32,20 @@
 
 ---
 
+**🔗 RECURSOS DEL PROYECTO:**
+
+| Recurso | Enlace |
+| :--- | :--- |
+| 📦 Repositorio de Código Fuente (GitHub) | https://github.com/Bryared/Muyu360_BD |
+| 🌐 Aplicación Web Desplegada en Producción (Vercel) | https://muyu360-bd.vercel.app/ |
+
+---
+
+
 ## **1. ANTECEDENTES**
 
 ### **1.1. Estado del Arte**
+
 
 La gestión de trámites documentarios ha evolucionado drásticamente desde los archivadores físicos y los libros de actas manuales hacia los Sistemas de Gestión Documental (SGD) o *Document Management Systems (DMS)*. En el ámbito corporativo y estatal moderno, el uso de bases de datos relacionales robustas (como PostgreSQL, MySQL o Oracle) combinadas con arquitecturas de software de tres capas (Frontend, Backend y Persistencia) representa el estándar de la industria.
 
@@ -829,7 +840,7 @@ graph TD
 2. **Garantía de Integridad y Trazabilidad:** El diseño en 3FN y las restricciones de llaves foráneas (`FOREIGN KEY ... ON DELETE RESTRICT`) garantizan que no existan huérfanos ni inconsistencias en la base de datos de Supabase, registrando de forma auditable el flujo transaccional de cada expediente.
 3. **Valor Agregado Académico-Profesional:** Al implementar un login relacional multiusuario real e interactivo y una resiliencia local en modo desconectado, el proyecto supera ampliamente el alcance básico de la rúbrica tradicional, demostrando creatividad, dominio técnico y alta usabilidad comercial.
 
-### **11.2. Recomendaciones**
+### **12.2. Recomendaciones**
 
 1. **Monitoreo del Almacenamiento:** Debido a que los documentos físicos se escanean, se recomienda implementar un disparador (*trigger*) en PostgreSQL que valide el peso máximo de los archivos en la columna `archivo_url` antes de insertar para evitar sobrecostos en el storage de Supabase.
 2. **Ampliación del Modelo a Jerarquías Complejas:** Para futuras versiones de la asignatura (SGBD II), se recomienda añadir una relación recursiva en la tabla `area` para modelar subáreas y divisiones jerárquicas complejas dentro de la corporación.
