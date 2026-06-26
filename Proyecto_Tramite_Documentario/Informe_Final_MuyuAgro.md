@@ -36,7 +36,7 @@
 
 | Recurso | Enlace |
 | :--- | :--- |
-| 📦 Repositorio de Código Fuente (GitHub) | https://github.com/Bryared/Muyu360_BD |
+| 📦 Repositorio de Código Fuente (GitHub) | https://github.com/Bryared/Muyu360_BD/tree/main/Proyecto_Tramite_Documentario |
 | 🌐 Aplicación Web Desplegada en Producción (Vercel) | https://muyu360-bd.vercel.app/ |
 
 ---
