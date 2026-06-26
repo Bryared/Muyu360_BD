@@ -3,9 +3,9 @@ spring:
     name: tramite-documentario-backend
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:tramite}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://db.kaivkiifdglznxqehmag.supabase.co:5432/postgres
+    username: postgres
+    password: MuyuAgro-DB
     driver-class-name: org.postgresql.Driver
 
   jpa:
