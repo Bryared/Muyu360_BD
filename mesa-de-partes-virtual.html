@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mesa de Partes Virtual — Oficina XYZ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --azul:#1B3A5C;
+    --azul-osc:#122A45;
+    --grafito:#2B2B2B;
+    --papel:#FAF8F4;
+    --papel-card:#FFFFFF;
+    --lacre:#A53D3D;
+    --lacre-osc:#7E2E2E;
+    --verde:#3D6B4F;
+    --verde-bg:#E8F0EA;
+    --ambar:#9A6B22;
+    --ambar-bg:#FBF1DF;
+    --linea:#DDD7CB;
+    --texto-suave:#6B6358;
+    --sombra:0 2px 8px rgba(27,58,92,0.08);
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0;}
+
+  html, body{
+    font-family:'Inter', sans-serif;
+    background:var(--papel);
+    color:var(--grafito);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3,.serif{font-family:'Lora', serif;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+
+  /* ---------- LOGIN ---------- */
+  #vista-login{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(165deg, var(--azul) 0%, var(--azul-osc) 100%);
+    padding:24px;
+  }
+  .login-box{
+    background:var(--papel-card);
+    width:100%;
+    max-width:420px;
+    border-radius:4px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);
+    overflow:hidden;
+    position:relative;
+  }
+  .login-folio{
+    position:absolute;top:18px;right:18px;width:56px;height:56px;
+    border:2px solid var(--lacre);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    transform:rotate(-8deg);opacity:0.85;
+  }
+  .login-folio span{font-family:'IBM Plex Mono', monospace;font-size:8px;font-weight:600;color:var(--lacre);text-align:center;line-height:1.2;letter-spacing:0.5px;}
+  .login-header{background:var(--azul-osc);padding:32px 36px 28px;color:#fff;}
+  .login-header .eyebrow{font-family:'IBM Plex Mono', monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9DB6CC;margin:0 0 10px;}
+  .login-header h1{font-size:22px;margin:0 0 6px;line-height:1.3;}
+  .login-header p{margin:0;font-size:13px;color:#C2D2E0;}
+  .login-body{padding:30px 36px 34px;}
+
+  .campo{margin-bottom:18px;}
+  .campo label{display:block;font-size:12.5px;font-weight:600;color:var(--azul-osc);margin-bottom:6px;}
+  .campo .campo-meta{font-family:'IBM Plex Mono', monospace;font-size:10px;color:var(--texto-suave);font-weight:400;text-transform:none;letter-spacing:0.3px;}
+  .campo input, .campo select, .campo textarea{
+    width:100%;padding:11px 13px;border:1.5px solid var(--linea);border-radius:3px;
+    font-size:14px;font-family:'Inter', sans-serif;background:#fff;color:var(--grafito);
+    transition:border-color .15s ease;
+  }
+  .campo input:focus, .campo select:focus, .campo textarea:focus{outline:none;border-color:var(--azul);}
+  .campo input:focus-visible, .campo select:focus-visible, .campo textarea:focus-visible{outline:2px solid var(--azul);outline-offset:1px;}
+  .campo .ayuda{font-size:11.5px;color:var(--texto-suave);margin-top:4px;}
+
+  .btn{border:none;border-radius:3px;font-family:'Inter', sans-serif;font-weight:600;font-size:14px;padding:12px 20px;cursor:pointer;transition:transform .08s ease, box-shadow .15s ease, background .15s ease;}
+  .btn:active{transform:translateY(1px);}
+  .btn-primario{background:var(--lacre);color:#fff;width:100%;}
+  .btn-primario:hover{background:var(--lacre-osc);}
+  .btn-secundario{background:#fff;color:var(--azul-osc);border:1.5px solid var(--linea);}
+  .btn-secundario:hover{border-color:var(--azul);}
+  .btn-fantasma{background:transparent;color:var(--azul);text-decoration:underline;padding:6px;}
+
+  .login-footer-tip{margin-top:18px;padding-top:16px;border-top:1px dashed var(--linea);font-size:12px;color:var(--texto-suave);text-align:center;}
+  .login-footer-tip b{color:var(--azul-osc);}
+
+  /* ---------- APP SHELL ---------- */
+  #vista-app{display:none;}
+  .app-shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+  .sidebar{background:var(--azul-osc);color:#fff;padding:24px 0;display:flex;flex-direction:column;}
+  .sidebar-marca{padding:0 22px 22px;border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:14px;}
+  .sidebar-marca .eyebrow{font-family:'IBM Plex Mono', monospace;font-size:10px;letter-spacing:1.5px;color:#85A2BC;text-transform:uppercase;}
+  .sidebar-marca h2{font-size:16px;margin:6px 0 0;line-height:1.35;}
+  .nav-item{display:flex;align-items:center;gap:11px;padding:11px 22px;color:#C2D2E0;font-size:13.5px;font-weight:500;cursor:pointer;border-left:3px solid transparent;transition:background .12s ease;}
+  .nav-item:hover{background:rgba(255,255,255,0.06);}
+  .nav-item.activo{background:rgba(255,255,255,0.09);color:#fff;border-left-color:var(--lacre);}
+  .nav-item .icono{width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .sidebar-spacer{flex:1;}
+  .sidebar-usuario{padding:16px 22px;border-top:1px solid rgba(255,255,255,0.12);font-size:12px;color:#9DB0C2;}
+  .sidebar-usuario b{display:block;color:#fff;font-size:13.5px;margin-bottom:2px;}
+  .sidebar-usuario button{background:none;border:none;color:#E0A6A6;font-size:11.5px;cursor:pointer;padding:0;margin-top:8px;text-decoration:underline;}
+  .contenido{padding:30px 38px 60px;max-width:1180px;}
+  .top-barra{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:26px;flex-wrap:wrap;gap:16px;}
+  .top-barra .eyebrow{font-family:'IBM Plex Mono', monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--texto-suave);margin:0 0 6px;}
+  .top-barra h1{font-size:25px;margin:0;color:var(--azul-osc);}
+
+  .vista-panel{display:none;}
+  .vista-panel.activa{display:block;}
+
+  .kpis{display:grid;grid-template-columns:repeat(4, 1fr);gap:16px;margin-bottom:30px;}
+  .kpi{background:var(--papel-card);border:1px solid var(--linea);border-radius:4px;padding:18px 20px;box-shadow:var(--sombra);}
+  .kpi .num{font-family:'IBM Plex Mono', monospace;font-size:30px;font-weight:600;color:var(--azul-osc);line-height:1;}
+  .kpi .label{font-size:12px;color:var(--texto-suave);margin-top:6px;font-weight:500;}
+  .kpi.alerta .num{color:var(--lacre);}
+
+  .panel{background:var(--papel-card);border:1px solid var(--linea);border-radius:4px;box-shadow:var(--sombra);margin-bottom:24px;}
+  .panel-header{padding:16px 22px;border-bottom:1px solid var(--linea);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+  .panel-header h3{font-size:15.5px;margin:0;color:var(--azul-osc);}
+  .panel-header .subnota{font-size:11.5px;color:var(--texto-suave);font-family:'IBM Plex Mono', monospace;}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  thead th{text-align:left;font-family:'IBM Plex Mono', monospace;font-size:10.5px;letter-spacing:0.8px;text-transform:uppercase;color:var(--texto-suave);padding:11px 22px;border-bottom:1px solid var(--linea);font-weight:600;}
+  tbody td{padding:13px 22px;border-bottom:1px solid #EFEAE0;vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#FBF9F5;}
+
+  .folio-cod{font-family:'IBM Plex Mono', monospace;font-weight:600;color:var(--azul-osc);font-size:12.5px;}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:20px;font-size:11.5px;font-weight:600;}
+  .badge::before{content:'';width:6px;height:6px;border-radius:50%;}
+  .badge.pendiente{background:var(--ambar-bg);color:var(--ambar);}
+  .badge.pendiente::before{background:var(--ambar);}
+  .badge.proceso{background:#E6EDF4;color:var(--azul);}
+  .badge.proceso::before{background:var(--azul);}
+  .badge.respondido{background:var(--verde-bg);color:var(--verde);}
+  .badge.respondido::before{background:var(--verde);}
+  .badge.archivado{background:#EEEAE2;color:var(--texto-suave);}
+  .badge.archivado::before{background:var(--texto-suave);}
+  .badge.vencido{background:#F5E1DD;color:var(--lacre);}
+  .badge.vencido::before{background:var(--lacre);}
+
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 22px;padding:24px 22px;}
+  .form-grid .ancho-completo{grid-column:1 / -1;}
+
+  .tag-input{display:flex;flex-wrap:wrap;gap:6px;border:1.5px solid var(--linea);border-radius:3px;padding:8px;min-height:44px;}
+  .tag-input input{border:none;outline:none;flex:1;min-width:120px;font-size:13.5px;padding:4px;}
+  .tag-chip{background:var(--azul);color:#fff;font-size:12px;padding:4px 9px 4px 11px;border-radius:20px;display:flex;align-items:center;gap:6px;}
+  .tag-chip button{background:none;border:none;color:#fff;cursor:pointer;font-size:13px;line-height:1;opacity:0.8;padding:0;}
+  .tag-chip button:hover{opacity:1;}
+
+  .form-footer{padding:18px 22px;border-top:1px solid var(--linea);display:flex;justify-content:flex-end;gap:10px;background:#FBF9F5;}
+
+  .folio-preview{background:var(--azul-osc);color:#fff;border-radius:4px;padding:20px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  .folio-preview .num-folio{font-family:'IBM Plex Mono', monospace;font-size:22px;font-weight:600;letter-spacing:1px;}
+  .folio-preview .desc{font-size:12px;color:#9DB6CC;margin-top:3px;}
+
+  .filtros-busqueda{display:grid;grid-template-columns:repeat(5, 1fr);gap:14px;padding:20px 22px;align-items:end;}
+  .filtros-busqueda .campo{margin-bottom:0;}
+  .filtros-busqueda .campo-btn{display:flex;}
+
+  .resultado-vacio{padding:50px 20px;text-align:center;color:var(--texto-suave);}
+  .resultado-vacio .icono-vacio{font-size:34px;margin-bottom:10px;opacity:0.4;}
+
+  .timeline{padding:24px 26px;}
+  .timeline-item{display:flex;gap:16px;position:relative;padding-bottom:26px;}
+  .timeline-item:last-child{padding-bottom:0;}
+  .timeline-item:not(:last-child)::before{content:'';position:absolute;left:9px;top:22px;bottom:0;width:2px;background:var(--linea);}
+  .timeline-dot{width:20px;height:20px;border-radius:50%;background:var(--azul);border:3px solid #fff;box-shadow:0 0 0 2px var(--azul);flex-shrink:0;margin-top:2px;}
+  .timeline-item.completado .timeline-dot{background:var(--verde);box-shadow:0 0 0 2px var(--verde);}
+  .timeline-item.actual .timeline-dot{background:var(--ambar);box-shadow:0 0 0 2px var(--ambar);}
+  .timeline-content h4{margin:0 0 3px;font-size:14px;color:var(--grafito);}
+  .timeline-content .meta{font-size:12px;color:var(--texto-suave);}
+  .timeline-content .nota{margin-top:6px;font-size:13px;background:#FBF9F5;border:1px solid var(--linea);border-radius:3px;padding:9px 12px;color:var(--grafito);}
+  .timeline-content .nota b{color:var(--azul-osc);}
+
+  .avatar-letra{width:34px;height:34px;border-radius:50%;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;font-family:'Lora', serif;flex-shrink:0;}
+  .fila-empleado{display:flex;align-items:center;gap:12px;}
+  .fila-empleado .nombre-cargo b{display:block;font-size:13.5px;}
+  .fila-empleado .nombre-cargo span{font-size:12px;color:var(--texto-suave);}
+
+  .acciones-fila{display:flex;gap:6px;}
+  .icon-btn{width:30px;height:30px;border-radius:3px;border:1px solid var(--linea);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--texto-suave);transition:all .12s ease;}
+  .icon-btn:hover{border-color:var(--azul);color:var(--azul);}
+
+  .modal-fondo{display:none;position:fixed;inset:0;background:rgba(20,30,40,0.55);align-items:center;justify-content:center;z-index:100;padding:20px;}
+  .modal-fondo.activo{display:flex;}
+  .modal-caja{background:#fff;border-radius:4px;width:100%;max-width:480px;box-shadow:0 24px 60px rgba(0,0,0,0.3);max-height:90vh;overflow-y:auto;}
+  .modal-header{padding:18px 22px;border-bottom:1px solid var(--linea);display:flex;justify-content:space-between;align-items:center;}
+  .modal-header h3{margin:0;font-size:16px;color:var(--azul-osc);}
+  .modal-header button{background:none;border:none;cursor:pointer;font-size:20px;color:var(--texto-suave);line-height:1;}
+  .modal-cuerpo{padding:20px 22px;}
+  .modal-footer{padding:16px 22px;border-top:1px solid var(--linea);display:flex;justify-content:flex-end;gap:10px;}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--verde);color:#fff;padding:13px 20px;border-radius:4px;font-size:13.5px;font-weight:500;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:200;display:flex;align-items:center;gap:9px;opacity:0;transform:translateY(10px);transition:all .25s ease;pointer-events:none;max-width:340px;}
+  .toast.activo{opacity:1;transform:translateY(0);}
+
+  .info-tabla-tag{
+    display:inline-flex;align-items:center;gap:5px;
+    font-family:'IBM Plex Mono', monospace;font-size:10px;
+    color:var(--texto-suave);border:1px solid var(--linea);
+    padding:2px 7px;border-radius:3px;margin-left:8px;
+  }
+
+  @media (max-width: 880px){
+    .app-shell{grid-template-columns:1fr;}
+    .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;z-index:50;transform:translateX(-100%);transition:transform .2s ease;}
+    .sidebar.abierto{transform:translateX(0);}
+    .contenido{padding:20px;}
+    .kpis{grid-template-columns:repeat(2,1fr);}
+    .form-grid{grid-template-columns:1fr;}
+    .filtros-busqueda{grid-template-columns:1fr;}
+    .btn-menu-movil{display:flex !important;}
+  }
+  .btn-menu-movil{display:none;width:38px;height:38px;align-items:center;justify-content:center;border:1px solid var(--linea);border-radius:4px;background:#fff;cursor:pointer;margin-bottom:14px;}
+
+  @media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important;}}
+</style>
+</head>
+<body>
+
+<!-- ============ VISTA LOGIN ============ -->
+<div id="vista-login">
+  <div class="login-box">
+    <div class="login-header">
+      <p class="eyebrow">UNALM · Oficina XYZ</p>
+      <h1 class="serif">Mesa de Partes Virtual</h1>
+      <p>Sistema de trámite documentario</p>
+      <div class="login-folio"><span>SIST.<br>TRÁMITE<br>2024</span></div>
+    </div>
+    <div class="login-body">
+      <div class="campo">
+        <label for="login-usuario">Usuario o correo</label>
+        <input type="text" id="login-usuario" placeholder="rosa.medina@unalm.edu.pe" value="rosa.medina@unalm.edu.pe">
+      </div>
+      <div class="campo">
+        <label for="login-clave">Contraseña</label>
+        <input type="password" id="login-clave" placeholder="••••••••" value="demo1234">
+      </div>
+      <button class="btn btn-primario" onclick="ingresar()">Ingresar al sistema</button>
+      <div class="login-footer-tip">
+        Acceso de demostración — usa cualquier usuario/clave.<br>
+        <b>Rol simulado:</b> ID_empleado 1 (Jefe de Oficina, sin ID_jefe)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VISTA APP ============ -->
+<div id="vista-app">
+  <div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-marca">
+        <p class="eyebrow">Oficina XYZ</p>
+        <h2 class="serif">Mesa de Partes<br>Virtual</h2>
+      </div>
+
+      <div class="nav-item activo" data-vista="dashboard" onclick="irAVista('dashboard', this)">
+        <span class="icono">📋</span> Panel general
+      </div>
+      <div class="nav-item" data-vista="registro" onclick="irAVista('registro', this)">
+        <span class="icono">📝</span> Registrar documento
+      </div>
+      <div class="nav-item" data-vista="busqueda" onclick="irAVista('busqueda', this)">
+        <span class="icono">🔍</span> Buscar documentos
+      </div>
+      <div class="nav-item" data-vista="seguimiento" onclick="irAVista('seguimiento', this)">
+        <span class="icono">🧭</span> Seguimiento (historial)
+      </div>
+      <div class="nav-item" data-vista="empleados" onclick="irAVista('empleados', this)">
+        <span class="icono">👥</span> Empleados
+      </div>
+      <div class="nav-item" data-vista="tipos" onclick="irAVista('tipos', this)">
+        <span class="icono">🗂️</span> Tipos de documento
+      </div>
+
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-usuario">
+        <b id="nombre-usuario-sidebar">Rosa Medina Falcón</b>
+        <span class="mono" style="font-size:11px">ID_empleado: 1</span>
+        <button onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <main class="contenido">
+
+      <button class="btn-menu-movil" onclick="document.getElementById('sidebar').classList.toggle('abierto')">☰</button>
+
+      <!-- ===== DASHBOARD ===== -->
+      <section class="vista-panel activa" id="panel-dashboard">
+        <div class="top-barra">
+          <div>
+            <p class="eyebrow">Panel general</p>
+            <h1>Documentos de la oficina</h1>
+          </div>
+          <button class="btn btn-primario" style="width:auto" onclick="irAVista('registro', document.querySelector('[data-vista=registro]'))">+ Registrar documento</button>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><div class="num" id="kpi-total">—</div><div class="label">Documentos registrados</div></div>
+          <div class="kpi alerta"><div class="num" id="kpi-pendientes">—</div><div class="label">Estado_actual: Pendiente</div></div>
+          <div class="kpi"><div class="num" id="kpi-respondidos">—</div><div class="label">Estado_actual: Respondido</div></div>
+          <div class="kpi alerta"><div class="num" id="kpi-vencidos">—</div><div class="label">Con Fecha_limite vencida</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Últimos documentos (tabla DOCUMENTOS)</h3>
+            <span class="btn-fantasma" style="cursor:pointer;font-size:12.5px" onclick="irAVista('busqueda', document.querySelector('[data-vista=busqueda]'))">Ver todos →</span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Código_Documento</th><th>Tipo</th><th>Emisor_externo</th><th>Fecha_de_recepción</th><th>Fecha_limite</th><th>Estado_actual</th></tr>
+            </thead>
+            <tbody id="tabla-recientes"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== REGISTRO ===== -->
+      <section class="vista-panel" id="panel-registro">
+        <div class="top-barra">
+          <div>
+            <p class="eyebrow">Inserta en DOCUMENTOS + METADATOS_DE_BUSQUEDA</p>
+            <h1>Registrar documento</h1>
+          </div>
+        </div>
+
+        <div class="folio-preview">
+          <div>
+            <div class="num-folio mono" id="folio-generado">Código_Documento: EXP-2024-0143</div>
+            <div class="desc">ID_documento se autogenera (PK autoincremental)</div>
+          </div>
+          <div style="text-align:right">
+            <div class="desc">Fecha_de_recepción</div>
+            <div class="mono" id="fecha-actual" style="font-size:14px;font-weight:600"></div>
+          </div>
+        </div>
+
+        <form class="panel" onsubmit="registrarDocumento(event)">
+          <div class="panel-header"><h3>Tabla DOCUMENTOS</h3></div>
+          <div class="form-grid">
+
+            <div class="campo">
+              <label>Formato <span class="campo-meta">(Formato VARCHAR)</span></label>
+              <select id="reg-formato">
+                <option>Físico</option>
+                <option>Virtual</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label>Tipo de documento <span class="campo-meta">(ID_tipodoc FK)</span></label>
+              <select id="reg-tipodoc"></select>
+            </div>
+
+            <div class="campo ancho-completo">
+              <label>Fecha límite de respuesta <span class="campo-meta">(Fecha_limite DATE, opcional)</span></label>
+              <input type="date" id="reg-fecha-limite">
+              <div class="ayuda">Déjalo vacío si el tipo de documento no requiere respuesta.</div>
+            </div>
+
+            <div class="campo ancho-completo">
+              <label>Archivo escaneado o digital <span class="campo-meta">(Ruta_archivo_escaneado VARCHAR)</span></label>
+              <input type="file" id="reg-archivo">
+            </div>
+          </div>
+
+          <div class="panel-header" style="border-top:1px solid var(--linea)"><h3>Tabla METADATOS_DE_BUSQUEDA</h3></div>
+          <div class="form-grid">
+            <div class="campo">
+              <label>Emisor externo <span class="campo-meta">(Emisor_externo VARCHAR)</span></label>
+              <input type="text" id="reg-emisor" placeholder="Nombre o entidad emisora" required>
+            </div>
+            <div class="campo">
+              <label>Receptor externo <span class="campo-meta">(Receptor_externo VARCHAR)</span></label>
+              <input type="text" id="reg-receptor" placeholder="A quién se dirige originalmente" required>
+            </div>
+
+            <div class="campo ancho-completo">
+              <label>Resumen del motivo <span class="campo-meta">(Resumen_motivo TEXT)</span></label>
+              <textarea id="reg-motivo" rows="2" placeholder="Describe brevemente el motivo del documento" required></textarea>
+            </div>
+
+            <div class="campo ancho-completo">
+              <label>Palabras clave <span class="campo-meta">(Palabras_claves TEXT, separadas por coma)</span></label>
+              <div class="tag-input" id="contenedor-tags" onclick="document.getElementById('input-tag').focus()">
+                <input type="text" id="input-tag" placeholder="Escribe y presiona Enter..." onkeydown="agregarTag(event)">
+              </div>
+              <div class="ayuda">Ej: presupuesto, convenio, becas — facilita encontrar el documento luego.</div>
+            </div>
+          </div>
+
+          <div class="panel-header" style="border-top:1px solid var(--linea)"><h3>Primer movimiento (tabla TRAMITES_HISTORIAL)</h3></div>
+          <div class="form-grid">
+            <div class="campo">
+              <label>Empleado que registra <span class="campo-meta">(ID_emp_origen FK)</span></label>
+              <select id="reg-emp-origen"></select>
+            </div>
+            <div class="campo">
+              <label>Derivar a <span class="campo-meta">(ID_emp_destino FK)</span></label>
+              <select id="reg-emp-destino"></select>
+            </div>
+            <div class="campo ancho-completo">
+              <label>Proveído <span class="campo-meta">(Proveído TEXT, opcional)</span></label>
+              <input type="text" id="reg-proveido" placeholder='Ej: "Para atención y respuesta directa"'>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <button type="button" class="btn btn-secundario" onclick="limpiarFormularioRegistro()">Limpiar</button>
+            <button type="submit" class="btn btn-primario" style="width:auto">Guardar documento</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ===== BUSQUEDA ===== -->
+      <section class="vista-panel" id="panel-busqueda">
+        <div class="top-barra">
+          <div>
+            <p class="eyebrow">Consulta sobre DOCUMENTOS + METADATOS_DE_BUSQUEDA</p>
+            <h1>Buscar documentos</h1>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="filtros-busqueda">
+            <div class="campo">
+              <label>Tipo de documento</label>
+              <select id="f-tipo"><option value="">Todos</option></select>
+            </div>
+            <div class="campo">
+              <label>Emisor_externo</label>
+              <input type="text" id="f-remitente" placeholder="Nombre del emisor">
+            </div>
+            <div class="campo">
+              <label>Palabra clave</label>
+              <input type="text" id="f-palabra" placeholder="Ej: convenio">
+            </div>
+            <div class="campo">
+              <label>Fecha_de_recepción desde</label>
+              <input type="date" id="f-fecha">
+            </div>
+            <div class="campo campo-btn">
+              <button class="btn btn-primario" onclick="buscarDocumentos()">Buscar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Resultados</h3>
+            <span class="mono" id="contador-resultados" style="font-size:12px;color:var(--texto-suave)"></span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Código_Documento</th><th>Emisor_externo</th><th>Tipo</th><th>Resumen_motivo</th><th>Fecha_de_recepción</th><th>Estado_actual</th><th></th></tr>
+            </thead>
+            <tbody id="tabla-busqueda"></tbody>
+          </table>
+          <div class="resultado-vacio" id="busqueda-vacia" style="display:none">
+            <div class="icono-vacio">🗂️</div>
+            No se encontraron documentos con esos filtros.<br>Intenta ajustar la búsqueda.
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SEGUIMIENTO ===== -->
+      <section class="vista-panel" id="panel-seguimiento">
+        <div class="top-barra">
+          <div>
+            <p class="eyebrow">Lectura de TRAMITES_HISTORIAL por ID_documento</p>
+            <h1>Seguimiento de documento</h1>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="filtros-busqueda" style="grid-template-columns:2fr 1fr">
+            <div class="campo">
+              <label>Buscar por Código_Documento</label>
+              <input type="text" id="seg-folio" placeholder="Ej: EXP-2024-0118" value="EXP-2024-0118">
+            </div>
+            <div class="campo campo-btn">
+              <button class="btn btn-primario" onclick="cargarSeguimiento()">Ver historial de trámite</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="panel-timeline">
+          <div class="panel-header">
+            <h3 id="seg-titulo-encabezado">Código_Documento <span class="folio-cod" id="seg-titulo-folio">—</span></h3>
+            <span class="badge proceso" id="seg-badge-estado">—</span>
+          </div>
+          <div class="timeline" id="contenedor-timeline"></div>
+        </div>
+      </section>
+
+      <!-- ===== EMPLEADOS ===== -->
+      <section class="vista-panel" id="panel-empleados">
+        <div class="top-barra">
+          <div>
+            <p class="eyebrow">Tabla EMPLEADOS (con ID_jefe recursivo)</p>
+            <h1>Personal de la oficina</h1>
+          </div>
+          <button class="btn btn-primario" style="width:auto" onclick="abrirModalEmpleado()">+ Agregar empleado</button>
+        </div>
+
+        <div class="panel">
+          <table>
+            <thead>
+              <tr><th>Nombre y Apellido</th><th>Ocupación</th><th>ID_jefe</th><th>Documentos a cargo</th><th></th></tr>
+            </thead>
+            <tbody id="tabla-empleados"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== TIPOS DE DOCUMENTO ===== -->
+      <section class="vista-panel" id="panel-tipos">
+        <div class="top-barra">
+          <div>
+            <p class="eyebrow">Tabla TIPOS_DE_DOCUMENTOS (catálogo)</p>
+            <h1>Tipos de documento</h1>
+          </div>
+          <button class="btn btn-primario" style="width:auto" onclick="abrirModalTipo()">+ Agregar tipo</button>
+        </div>
+
+        <div class="panel">
+          <table>
+            <thead>
+              <tr><th>ID_tipodoc</th><th>Nombre_tipo</th><th>Requiere_respuesta</th><th>Documentos de este tipo</th></tr>
+            </thead>
+            <tbody id="tabla-tipos"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL EMPLEADO -->
+<div class="modal-fondo" id="modal-empleado">
+  <div class="modal-caja">
+    <div class="modal-header">
+      <h3>Agregar empleado</h3>
+      <button onclick="cerrarModalEmpleado()">×</button>
+    </div>
+    <div class="modal-cuerpo">
+      <div class="campo">
+        <label>Nombre <span class="campo-meta">(Nombre VARCHAR)</span></label>
+        <input type="text" id="emp-nombre" placeholder="Ej: Carlos">
+      </div>
+      <div class="campo">
+        <label>Apellido <span class="campo-meta">(Apellido VARCHAR)</span></label>
+        <input type="text" id="emp-apellido" placeholder="Ej: Vargas Ruiz">
+      </div>
+      <div class="campo">
+        <label>Ocupación <span class="campo-meta">(Ocupacion VARCHAR)</span></label>
+        <input type="text" id="emp-ocupacion" placeholder="Ej: Asistente administrativo">
+      </div>
+      <div class="campo">
+        <label>Jefe directo <span class="campo-meta">(ID_jefe FK, recursiva a EMPLEADOS)</span></label>
+        <select id="emp-jefe"></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secundario" onclick="cerrarModalEmpleado()">Cancelar</button>
+      <button class="btn btn-primario" style="width:auto" onclick="guardarEmpleado()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TIPO DE DOCUMENTO -->
+<div class="modal-fondo" id="modal-tipo">
+  <div class="modal-caja">
+    <div class="modal-header">
+      <h3>Agregar tipo de documento</h3>
+      <button onclick="cerrarModalTipo()">×</button>
+    </div>
+    <div class="modal-cuerpo">
+      <div class="campo">
+        <label>Nombre_tipo <span class="campo-meta">(VARCHAR)</span></label>
+        <input type="text" id="tipo-nombre" placeholder="Ej: Resolución">
+      </div>
+      <div class="campo">
+        <label>Requiere_respuesta <span class="campo-meta">(BOOLEAN)</span></label>
+        <select id="tipo-requiere">
+          <option value="1">Sí</option>
+          <option value="0">No (solo se archiva)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secundario" onclick="cerrarModalTipo()">Cancelar</button>
+      <button class="btn btn-primario" style="width:auto" onclick="guardarTipo()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ <span id="toast-texto">Guardado correctamente</span></div>
+
+<script>
+/* ===================== DATOS DE EJEMPLO (simulan las 5 tablas de la BD) ===================== */
+
+// TABLA EMPLEADOS
+let empleados = [
+  {ID_empleado:1, ID_jefe:null, Nombre:"Rosa", Apellido:"Medina Falcón", Ocupacion:"Jefe de Oficina"},
+  {ID_empleado:2, ID_jefe:1, Nombre:"Carla", Apellido:"Espinoza Ríos", Ocupacion:"Secretaria"},
+  {ID_empleado:3, ID_jefe:1, Nombre:"Jorge", Apellido:"Salazar Núñez", Ocupacion:"Asistente administrativo"},
+  {ID_empleado:4, ID_jefe:1, Nombre:"Lucía", Apellido:"Fernández Paz", Ocupacion:"Analista legal"},
+];
+
+// TABLA TIPOS_DE_DOCUMENTOS
+let tiposDocumento = [
+  {ID_tipodoc:1, Nombre_tipo:"Oficio", Requiere_respuesta:true},
+  {ID_tipodoc:2, Nombre_tipo:"Solicitud", Requiere_respuesta:true},
+  {ID_tipodoc:3, Nombre_tipo:"Resolución", Requiere_respuesta:false},
+  {ID_tipodoc:4, Nombre_tipo:"Memorándum", Requiere_respuesta:true},
+  {ID_tipodoc:5, Nombre_tipo:"Informe", Requiere_respuesta:false},
+  {ID_tipodoc:6, Nombre_tipo:"Carta", Requiere_respuesta:true},
+];
+
+// TABLA DOCUMENTOS
+let documentos = [
+  {ID_documento:142, ID_tipodoc:1, Codigo_Documento:"EXP-2024-0142", Fecha_de_recepcion:"2024-11-18", Fecha_limite:"2024-11-25", Estado_actual:"Pendiente", Ruta_archivo_escaneado:"/escaneos/0142.pdf", Formato:"Físico"},
+  {ID_documento:141, ID_tipodoc:2, Codigo_Documento:"EXP-2024-0141", Fecha_de_recepcion:"2024-11-18", Fecha_limite:"2024-11-22", Estado_actual:"En proceso", Ruta_archivo_escaneado:"/escaneos/0141.pdf", Formato:"Virtual"},
+  {ID_documento:140, ID_tipodoc:4, Codigo_Documento:"EXP-2024-0140", Fecha_de_recepcion:"2024-11-17", Fecha_limite:"2024-11-20", Estado_actual:"Respondido", Ruta_archivo_escaneado:"/escaneos/0140.pdf", Formato:"Virtual"},
+  {ID_documento:139, ID_tipodoc:3, Codigo_Documento:"EXP-2024-0139", Fecha_de_recepcion:"2024-11-15", Fecha_limite:null, Estado_actual:"Archivado", Ruta_archivo_escaneado:"/escaneos/0139.pdf", Formato:"Físico"},
+  {ID_documento:138, ID_tipodoc:6, Codigo_Documento:"EXP-2024-0138", Fecha_de_recepcion:"2024-11-14", Fecha_limite:"2024-11-28", Estado_actual:"En proceso", Ruta_archivo_escaneado:"/escaneos/0138.pdf", Formato:"Físico"},
+  {ID_documento:118, ID_tipodoc:2, Codigo_Documento:"EXP-2024-0118", Fecha_de_recepcion:"2024-11-02", Fecha_limite:"2024-11-09", Estado_actual:"En proceso", Ruta_archivo_escaneado:"/escaneos/0118.pdf", Formato:"Virtual"},
+];
+
+// TABLA METADATOS_DE_BUSQUEDA
+let metadatos = [
+  {ID_busqueda:142, ID_documento:142, Emisor_externo:"Facultad de Economía y Planificación", Receptor_externo:"Jefe de Oficina", Palabras_claves:"informe, plazo", Resumen_motivo:"Solicita ampliación de plazo para entrega de informe semestral"},
+  {ID_busqueda:141, ID_documento:141, Emisor_externo:"Mario Quispe Huamán", Receptor_externo:"Secretaría", Palabras_claves:"constancia, beca, matrícula", Resumen_motivo:"Constancia de matrícula para trámite de beca"},
+  {ID_busqueda:140, ID_documento:140, Emisor_externo:"Oficina de Recursos Humanos", Receptor_externo:"Jefe de Oficina", Palabras_claves:"pagos, cronograma", Resumen_motivo:"Comunica nuevo cronograma de pagos a docentes"},
+  {ID_busqueda:139, ID_documento:139, Emisor_externo:"Rectorado UNALM", Receptor_externo:"Jefe de Oficina", Palabras_claves:"reglamento, normativa", Resumen_motivo:"Resolución rectoral N° 0452-2024 sobre reglamento interno"},
+  {ID_busqueda:138, ID_documento:138, Emisor_externo:"Empresa Agroindustrial San Marcos S.A.C.", Receptor_externo:"Jefe de Oficina", Palabras_claves:"convenio, prácticas", Resumen_motivo:"Propuesta de convenio de prácticas pre-profesionales"},
+  {ID_busqueda:118, ID_documento:118, Emisor_externo:"Ana Torres Delgado", Receptor_externo:"Secretaría", Palabras_claves:"constancia, matrícula", Resumen_motivo:"Solicitud de constancia de matrícula"},
+];
+
+// TABLA TRAMITES_HISTORIAL
+let historial = [
+  {ID_Tramite:1, ID_documento:118, ID_emp_origen:2, ID_emp_destino:2, Proveido:"Documento recibido en Mesa de Partes y registrado", Fecha_movimiento:"2024-11-02"},
+  {ID_Tramite:2, ID_documento:118, ID_emp_origen:1, ID_emp_destino:2, Proveido:"Para atención directa de la alumna", Fecha_movimiento:"2024-11-02"},
+  {ID_Tramite:3, ID_documento:118, ID_emp_origen:2, ID_emp_destino:2, Proveido:"En revisión: verificando registro académico antes de emitir constancia", Fecha_movimiento:"2024-11-04"},
+
+  {ID_Tramite:4, ID_documento:140, ID_emp_origen:3, ID_emp_destino:3, Proveido:"Documento recibido y registrado", Fecha_movimiento:"2024-11-17"},
+  {ID_Tramite:5, ID_documento:140, ID_emp_origen:1, ID_emp_destino:3, Proveido:"Comunicar cronograma a todo el personal docente", Fecha_movimiento:"2024-11-17"},
+  {ID_Tramite:6, ID_documento:140, ID_emp_origen:3, ID_emp_destino:3, Proveido:"Respuesta enviada confirmando recepción del cronograma", Fecha_movimiento:"2024-11-18"},
+
+  {ID_Tramite:7, ID_documento:138, ID_emp_origen:2, ID_emp_destino:2, Proveido:"Documento recibido y registrado", Fecha_movimiento:"2024-11-14"},
+  {ID_Tramite:8, ID_documento:138, ID_emp_origen:1, ID_emp_destino:4, Proveido:"Revisar términos legales del convenio antes de responder", Fecha_movimiento:"2024-11-15"},
+];
+
+let tagsActuales = [];
+let siguienteIdDocumento = 143;
+let siguienteIdTramite = historial.length + 1;
+let siguienteIdEmpleado = empleados.length + 1;
+let siguienteIdTipo = tiposDocumento.length + 1;
+
+/* ===================== HELPERS DE RELACIÓN ===================== */
+function nombreTipo(idTipo){
+  const t = tiposDocumento.find(t => t.ID_tipodoc === idTipo);
+  return t ? t.Nombre_tipo : '—';
+}
+function metaDeDocumento(idDoc){
+  return metadatos.find(m => m.ID_documento === idDoc);
+}
+function nombreEmpleado(idEmp){
+  const e = empleados.find(e => e.ID_empleado === idEmp);
+  return e ? `${e.Nombre} ${e.Apellido}` : '—';
+}
+function jefeDe(idEmp){
+  const e = empleados.find(e => e.ID_empleado === idEmp);
+  if(!e || !e.ID_jefe) return null;
+  return empleados.find(j => j.ID_empleado === e.ID_jefe);
+}
+function documentosPorEmpleado(idEmp){
+  return historial.filter(h => h.ID_emp_destino === idEmp).length;
+}
+function documentosPorTipo(idTipo){
+  return documentos.filter(d => d.ID_tipodoc === idTipo).length;
+}
+
+function claseBadgeEstado(estado){
+  const map = {"Pendiente":"pendiente","En proceso":"proceso","Respondido":"respondido","Archivado":"archivado","Vencido":"vencido"};
+  return map[estado] || "proceso";
+}
+function badgeHTML(estado){
+  return `<span class="badge ${claseBadgeEstado(estado)}">${estado}</span>`;
+}
+
+function poblarSelectsEstaticos(){
+  // tipos de documento (registro + filtro)
+  const opcionesTipo = tiposDocumento.map(t => `<option value="${t.ID_tipodoc}">${t.Nombre_tipo}${t.Requiere_respuesta ? '' : ' (no requiere respuesta)'}</option>`).join('');
+  document.getElementById('reg-tipodoc').innerHTML = opcionesTipo;
+  document.getElementById('f-tipo').innerHTML = '<option value="">Todos</option>' + opcionesTipo;
+
+  // empleados (registro, jefe)
+  const opcionesEmpleado = empleados.map(e => `<option value="${e.ID_empleado}">${e.Nombre} ${e.Apellido} — ${e.Ocupacion}</option>`).join('');
+  document.getElementById('reg-emp-origen').innerHTML = opcionesEmpleado;
+  document.getElementById('reg-emp-destino').innerHTML = opcionesEmpleado;
+  document.getElementById('emp-jefe').innerHTML = '<option value="">— Sin jefe (ej: Jefe de Oficina) —</option>' + opcionesEmpleado;
+}
+
+/* ===================== LOGIN ===================== */
+function ingresar(){
+  document.getElementById('vista-login').style.display = 'none';
+  document.getElementById('vista-app').style.display = 'block';
+  document.getElementById('fecha-actual').textContent = new Date().toLocaleString('es-PE', {dateStyle:'medium', timeStyle:'short'});
+  poblarSelectsEstaticos();
+  renderDashboard();
+  renderEmpleados();
+  renderTipos();
+  buscarDocumentos();
+}
+function cerrarSesion(){
+  document.getElementById('vista-app').style.display = 'none';
+  document.getElementById('vista-login').style.display = 'flex';
+}
+
+/* ===================== NAVEGACIÓN ===================== */
+function irAVista(nombre, elNav){
+  document.querySelectorAll('.vista-panel').forEach(v => v.classList.remove('activa'));
+  document.getElementById('panel-' + nombre).classList.add('activa');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('activo'));
+  if(elNav) elNav.classList.add('activo');
+  document.getElementById('sidebar').classList.remove('abierto');
+  if(nombre === 'seguimiento') cargarSeguimiento();
+}
+
+/* ===================== DASHBOARD ===================== */
+function renderDashboard(){
+  document.getElementById('kpi-total').textContent = documentos.length;
+  document.getElementById('kpi-pendientes').textContent = documentos.filter(d => d.Estado_actual === 'Pendiente').length;
+  document.getElementById('kpi-respondidos').textContent = documentos.filter(d => d.Estado_actual === 'Respondido').length;
+  const hoy = new Date().toISOString().slice(0,10);
+  document.getElementById('kpi-vencidos').textContent = documentos.filter(d => d.Fecha_limite && d.Fecha_limite < hoy && d.Estado_actual !== 'Respondido' && d.Estado_actual !== 'Archivado').length;
+
+  const tbody = document.getElementById('tabla-recientes');
+  const recientes = [...documentos].sort((a,b) => b.ID_documento - a.ID_documento).slice(0,5);
+  tbody.innerHTML = recientes.map(d => {
+    const meta = metaDeDocumento(d.ID_documento);
+    return `
+    <tr>
+      <td class="folio-cod">${d.Codigo_Documento}</td>
+      <td>${nombreTipo(d.ID_tipodoc)}</td>
+      <td>${meta ? meta.Emisor_externo : '—'}</td>
+      <td class="mono" style="font-size:12.5px">${d.Fecha_de_recepcion}</td>
+      <td class="mono" style="font-size:12.5px">${d.Fecha_limite || '—'}</td>
+      <td>${badgeHTML(d.Estado_actual)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ===================== REGISTRO ===================== */
+function agregarTag(e){
+  if(e.key === 'Enter' && e.target.value.trim() !== ''){
+    e.preventDefault();
+    tagsActuales.push(e.target.value.trim());
+    e.target.value = '';
+    renderTags();
+  }
+}
+function quitarTag(i){ tagsActuales.splice(i,1); renderTags(); }
+function renderTags(){
+  const cont = document.getElementById('contenedor-tags');
+  const input = document.getElementById('input-tag');
+  cont.querySelectorAll('.tag-chip').forEach(c => c.remove());
+  tagsActuales.forEach((t,i) => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.innerHTML = `${t} <button onclick="quitarTag(${i})">×</button>`;
+    cont.insertBefore(chip, input);
+  });
+}
+
+function registrarDocumento(e){
+  e.preventDefault();
+
+  const idTipo = parseInt(document.getElementById('reg-tipodoc').value);
+  const idDoc = siguienteIdDocumento++;
+  const codigo = "EXP-2024-" + String(idDoc).padStart(4,'0');
+  const fechaHoy = new Date().toISOString().slice(0,10);
+
+  // INSERT INTO DOCUMENTOS
+  documentos.unshift({
+    ID_documento: idDoc,
+    ID_tipodoc: idTipo,
+    Codigo_Documento: codigo,
+    Fecha_de_recepcion: fechaHoy,
+    Fecha_limite: document.getElementById('reg-fecha-limite').value || null,
+    Estado_actual: "Pendiente",
+    Ruta_archivo_escaneado: "/escaneos/" + codigo + ".pdf",
+    Formato: document.getElementById('reg-formato').value
+  });
+
+  // INSERT INTO METADATOS_DE_BUSQUEDA
+  metadatos.push({
+    ID_busqueda: idDoc,
+    ID_documento: idDoc,
+    Emisor_externo: document.getElementById('reg-emisor').value,
+    Receptor_externo: document.getElementById('reg-receptor').value,
+    Palabras_claves: tagsActuales.join(', '),
+    Resumen_motivo: document.getElementById('reg-motivo').value
+  });
+
+  // INSERT INTO TRAMITES_HISTORIAL (primer movimiento)
+  const idOrigen = parseInt(document.getElementById('reg-emp-origen').value);
+  const idDestino = parseInt(document.getElementById('reg-emp-destino').value);
+  const proveido = document.getElementById('reg-proveido').value;
+  historial.push({
+    ID_Tramite: siguienteIdTramite++,
+    ID_documento: idDoc,
+    ID_emp_origen: idOrigen,
+    ID_emp_destino: idDestino,
+    Proveido: proveido || "Documento recibido y registrado en el sistema",
+    Fecha_movimiento: fechaHoy
+  });
+
+  renderDashboard();
+  mostrarToast(`Documento guardado: ${codigo}`);
+  limpiarFormularioRegistro();
+}
+
+function limpiarFormularioRegistro(){
+  document.querySelectorAll('#panel-registro input[type=text], #panel-registro textarea, #panel-registro input[type=date]').forEach(i => i.value = '');
+  tagsActuales = [];
+  renderTags();
+  document.getElementById('folio-generado').textContent = `Código_Documento: EXP-2024-${String(siguienteIdDocumento).padStart(4,'0')}`;
+}
+
+/* ===================== BUSQUEDA ===================== */
+function buscarDocumentos(){
+  const tipo = document.getElementById('f-tipo').value;
+  const remitente = document.getElementById('f-remitente').value.toLowerCase();
+  const palabra = document.getElementById('f-palabra').value.toLowerCase();
+  const fecha = document.getElementById('f-fecha').value;
+
+  const resultados = documentos.filter(d => {
+    if(tipo && d.ID_tipodoc !== parseInt(tipo)) return false;
+    if(fecha && d.Fecha_de_recepcion < fecha) return false;
+    const meta = metaDeDocumento(d.ID_documento);
+    if(remitente && !(meta && meta.Emisor_externo.toLowerCase().includes(remitente))) return false;
+    if(palabra){
+      const enMotivo = meta && meta.Resumen_motivo.toLowerCase().includes(palabra);
+      const enTags = meta && meta.Palabras_claves.toLowerCase().includes(palabra);
+      if(!enMotivo && !enTags) return false;
+    }
+    return true;
+  });
+
+  const tbody = document.getElementById('tabla-busqueda');
+  const vacio = document.getElementById('busqueda-vacia');
+  document.getElementById('contador-resultados').textContent = `${resultados.length} resultado(s)`;
+
+  if(resultados.length === 0){
+    tbody.innerHTML = '';
+    vacio.style.display = 'block';
+    return;
+  }
+  vacio.style.display = 'none';
+  tbody.innerHTML = resultados.map(d => {
+    const meta = metaDeDocumento(d.ID_documento);
+    return `
+    <tr>
+      <td class="folio-cod">${d.Codigo_Documento}</td>
+      <td>${meta ? meta.Emisor_externo : '—'}</td>
+      <td>${nombreTipo(d.ID_tipodoc)}</td>
+      <td>${meta ? meta.Resumen_motivo : '—'}</td>
+      <td class="mono" style="font-size:12.5px">${d.Fecha_de_recepcion}</td>
+      <td>${badgeHTML(d.Estado_actual)}</td>
+      <td><span class="btn-fantasma" style="cursor:pointer;font-size:12.5px" onclick="irASeguimiento('${d.Codigo_Documento}')">Ver →</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function irASeguimiento(codigo){
+  document.getElementById('seg-folio').value = codigo;
+  irAVista('seguimiento', document.querySelector('[data-vista=seguimiento]'));
+}
+
+/* ===================== SEGUIMIENTO (TRAMITES_HISTORIAL) ===================== */
+function cargarSeguimiento(){
+  const codigo = document.getElementById('seg-folio').value.trim();
+  const doc = documentos.find(d => d.Codigo_Documento === codigo);
+  const cont = document.getElementById('contenedor-timeline');
+
+  document.getElementById('seg-titulo-folio').textContent = codigo || '—';
+
+  if(!doc){
+    document.getElementById('seg-badge-estado').outerHTML = '<span class="badge archivado">No encontrado</span>';
+    cont.innerHTML = `<div class="resultado-vacio"><div class="icono-vacio">🔎</div>No se encontró ningún documento con ese Código_Documento.</div>`;
+    return;
+  }
+
+  const meta = metaDeDocumento(doc.ID_documento);
+  document.getElementById('seg-titulo-encabezado').innerHTML = `Código_Documento <span class="folio-cod">${doc.Codigo_Documento}</span> — ${meta ? meta.Resumen_motivo : ''}`;
+
+  const badgeActual = document.getElementById('seg-badge-estado') || document.querySelector('#panel-timeline .panel-header span.badge');
+  const nuevoBadge = document.createElement('span');
+  nuevoBadge.id = 'seg-badge-estado';
+  nuevoBadge.className = `badge ${claseBadgeEstado(doc.Estado_actual)}`;
+  nuevoBadge.textContent = doc.Estado_actual;
+  badgeActual.replaceWith(nuevoBadge);
+
+  const movimientos = historial
+    .filter(h => h.ID_documento === doc.ID_documento)
+    .sort((a,b) => new Date(a.Fecha_movimiento) - new Date(b.Fecha_movimiento) || a.ID_Tramite - b.ID_Tramite);
+
+  if(movimientos.length === 0){
+    cont.innerHTML = `<div class="resultado-vacio"><div class="icono-vacio">🗂️</div>Este documento aún no tiene movimientos en TRAMITES_HISTORIAL.</div>`;
+    return;
+  }
+
+  cont.innerHTML = movimientos.map((m, i) => {
+    const esUltimo = i === movimientos.length - 1;
+    let estadoVisual = 'completado';
+    if(esUltimo && (doc.Estado_actual === 'Pendiente' || doc.Estado_actual === 'En proceso')) estadoVisual = 'actual';
+
+    return `
+    <div class="timeline-item ${estadoVisual}">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <h4>${nombreEmpleado(m.ID_emp_origen)} → ${nombreEmpleado(m.ID_emp_destino)}</h4>
+        <div class="meta">${m.Fecha_movimiento} · ID_Tramite ${m.ID_Tramite}</div>
+        ${m.Proveido ? `<div class="nota"><b>Proveído:</b> ${m.Proveido}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ===================== EMPLEADOS ===================== */
+function renderEmpleados(){
+  const tbody = document.getElementById('tabla-empleados');
+  tbody.innerHTML = empleados.map((e) => {
+    const jefe = jefeDe(e.ID_empleado);
+    return `
+    <tr>
+      <td>
+        <div class="fila-empleado">
+          <div class="avatar-letra">${e.Nombre.charAt(0)}</div>
+          <div class="nombre-cargo"><b>${e.Nombre} ${e.Apellido}</b><span class="mono">ID_empleado: ${e.ID_empleado}</span></div>
+        </div>
+      </td>
+      <td>${e.Ocupacion}</td>
+      <td>${jefe ? `${jefe.Nombre} ${jefe.Apellido}` : '<span class="mono" style="color:var(--texto-suave)">NULL (sin jefe)</span>'}</td>
+      <td>${documentosPorEmpleado(e.ID_empleado)} documentos</td>
+      <td>
+        <div class="acciones-fila">
+          <div class="icon-btn" title="Editar" onclick="alert('Editar a ${e.Nombre} ${e.Apellido} (demo)')">✎</div>
+          <div class="icon-btn" title="Eliminar" onclick="eliminarEmpleado(${e.ID_empleado})">🗑</div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function eliminarEmpleado(id){
+  const e = empleados.find(e => e.ID_empleado === id);
+  if(empleados.some(o => o.ID_jefe === id)){
+    alert(`No se puede eliminar a ${e.Nombre}: tiene empleados a cargo (restricción FK ID_jefe).`);
+    return;
+  }
+  if(confirm(`¿Quitar a ${e.Nombre} ${e.Apellido} del equipo?`)){
+    empleados = empleados.filter(e => e.ID_empleado !== id);
+    poblarSelectsEstaticos();
+    renderEmpleados();
+    mostrarToast('Empleado eliminado');
+  }
+}
+
+function abrirModalEmpleado(){ document.getElementById('modal-empleado').classList.add('activo'); }
+function cerrarModalEmpleado(){
+  document.getElementById('modal-empleado').classList.remove('activo');
+  document.getElementById('emp-nombre').value = '';
+  document.getElementById('emp-apellido').value = '';
+  document.getElementById('emp-ocupacion').value = '';
+}
+function guardarEmpleado(){
+  const nombre = document.getElementById('emp-nombre').value.trim();
+  const apellido = document.getElementById('emp-apellido').value.trim();
+  const ocupacion = document.getElementById('emp-ocupacion').value.trim();
+  if(!nombre || !apellido || !ocupacion){
+    alert('Completa nombre, apellido y ocupación (todos son NOT NULL).');
+    return;
+  }
+  const idJefe = document.getElementById('emp-jefe').value;
+  empleados.push({
+    ID_empleado: siguienteIdEmpleado++,
+    ID_jefe: idJefe ? parseInt(idJefe) : null,
+    Nombre: nombre, Apellido: apellido, Ocupacion: ocupacion
+  });
+  poblarSelectsEstaticos();
+  renderEmpleados();
+  cerrarModalEmpleado();
+  mostrarToast('Empleado agregado');
+}
+
+/* ===================== TIPOS DE DOCUMENTO ===================== */
+function renderTipos(){
+  const tbody = document.getElementById('tabla-tipos');
+  tbody.innerHTML = tiposDocumento.map(t => `
+    <tr>
+      <td class="mono">${t.ID_tipodoc}</td>
+      <td>${t.Nombre_tipo}</td>
+      <td>${t.Requiere_respuesta ? '<span class="badge respondido">Sí</span>' : '<span class="badge archivado">No</span>'}</td>
+      <td>${documentosPorTipo(t.ID_tipodoc)} documentos</td>
+    </tr>
+  `).join('');
+}
+function abrirModalTipo(){ document.getElementById('modal-tipo').classList.add('activo'); }
+function cerrarModalTipo(){
+  document.getElementById('modal-tipo').classList.remove('activo');
+  document.getElementById('tipo-nombre').value = '';
+}
+function guardarTipo(){
+  const nombre = document.getElementById('tipo-nombre').value.trim();
+  if(!nombre){ alert('El Nombre_tipo es obligatorio.'); return; }
+  tiposDocumento.push({
+    ID_tipodoc: siguienteIdTipo++,
+    Nombre_tipo: nombre,
+    Requiere_respuesta: document.getElementById('tipo-requiere').value === '1'
+  });
+  poblarSelectsEstaticos();
+  renderTipos();
+  cerrarModalTipo();
+  mostrarToast('Tipo de documento agregado');
+}
+
+/* ===================== TOAST ===================== */
+function mostrarToast(texto){
+  document.getElementById('toast-texto').textContent = texto;
+  const t = document.getElementById('toast');
+  t.classList.add('activo');
+  setTimeout(() => t.classList.remove('activo'), 2800);
+}
+</script>
+</body>
+</html>
